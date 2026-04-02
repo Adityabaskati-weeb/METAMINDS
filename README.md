@@ -26,20 +26,20 @@ The environment exposes the standard OpenEnv-style API:
 - `GET /metadata` returns environment metadata.
 - `GET /schema` returns action, observation, and state schemas.
 
-Core implementation lives in [server/app.py](/C:/Users/baska/OneDrive/Documents/New%20project/server/app.py), [server/er_triage_environment.py](/C:/Users/baska/OneDrive/Documents/New%20project/server/er_triage_environment.py), [app/models.py](/C:/Users/baska/OneDrive/Documents/New%20project/app/models.py), and [client.py](/C:/Users/baska/OneDrive/Documents/New%20project/client.py).
+Core implementation lives in [server/app.py](server/app.py), [server/er_triage_environment.py](server/er_triage_environment.py), [app/models.py](app/models.py), and [client.py](client.py).
 
 ## Project Layout
 
 This repository now follows the OpenEnv environment scaffold more closely:
 
-- [__init__.py](/C:/Users/baska/OneDrive/Documents/New%20project/__init__.py) exports the public package API
-- [client.py](/C:/Users/baska/OneDrive/Documents/New%20project/client.py) provides a typed `EnvClient`
-- [app/models.py](/C:/Users/baska/OneDrive/Documents/New%20project/app/models.py) defines action, observation, reward, and state models
-- [server/er_triage_environment.py](/C:/Users/baska/OneDrive/Documents/New%20project/server/er_triage_environment.py) implements the environment logic
-- [server/app.py](/C:/Users/baska/OneDrive/Documents/New%20project/server/app.py) exposes the FastAPI/OpenEnv server
-- [server/requirements.txt](/C:/Users/baska/OneDrive/Documents/New%20project/server/requirements.txt) contains container runtime dependencies
-- [openenv.yaml](/C:/Users/baska/OneDrive/Documents/New%20project/openenv.yaml) declares the environment manifest
-- [outputs](/C:/Users/baska/OneDrive/Documents/New%20project/outputs) stores runtime logs and evaluation artifacts
+- [__init__.py](__init__.py) exports the public package API
+- [client.py](client.py) provides a typed `EnvClient`
+- [app/models.py](app/models.py) defines action, observation, reward, and state models
+- [server/er_triage_environment.py](server/er_triage_environment.py) implements the environment logic
+- [server/app.py](server/app.py) exposes the FastAPI/OpenEnv server
+- [server/requirements.txt](server/requirements.txt) contains container runtime dependencies
+- [openenv.yaml](openenv.yaml) declares the environment manifest
+- [outputs](outputs) stores runtime logs and evaluation artifacts
 
 ## Action Space
 
@@ -117,7 +117,7 @@ The reward is shaped across the trajectory rather than only at the end:
 - queue pressure adds a small efficiency penalty
 - critical under-triage forces the patient score to `0.0`
 
-Grading logic is implemented in [app/graders.py](/C:/Users/baska/OneDrive/Documents/New%20project/app/graders.py) and [app/reward.py](/C:/Users/baska/OneDrive/Documents/New%20project/app/reward.py).
+Grading logic is implemented in [app/graders.py](app/graders.py) and [app/reward.py](app/reward.py).
 
 ## Setup
 
@@ -152,13 +152,13 @@ docker build -t metaminds-er-triage .
 docker run -p 8000:8000 metaminds-er-triage
 ```
 
-Detailed deployment instructions live in [deployment.md](/C:/Users/baska/OneDrive/Documents/New%20project/deployment.md).
+Detailed deployment instructions live in [deployment.md](deployment.md).
 
-Training scaffold details live in [training.md](/C:/Users/baska/OneDrive/Documents/New%20project/training.md).
+Training scaffold details live in [training.md](training.md).
 
 ## Baseline Inference
 
-The submission entrypoint is [inference.py](/C:/Users/baska/OneDrive/Documents/New%20project/inference.py) in the repository root.
+The submission entrypoint is [inference.py](inference.py) in the repository root.
 
 Required environment variables:
 
@@ -205,7 +205,7 @@ Current heuristic benchmark summary:
 The repo now also includes a completed lightweight supervised training pipeline that produces a local model artifact when training is run:
 
 - generated model path: `outputs/models/er_triage_policy.joblib`
-- training/eval report: [outputs/evals/training_report.json](/C:/Users/baska/OneDrive/Documents/New%20project/outputs/evals/training_report.json)
+- training/eval report: [outputs/evals/training_report.json](outputs/evals/training_report.json)
 
 The binary model artifact is intentionally not committed so the same repository can be pushed cleanly to Hugging Face Spaces.
 
@@ -220,7 +220,7 @@ These held-out scores are intentionally more conservative than the earlier in-fa
 
 ## Client Usage
 
-The repo includes a typed OpenEnv client in [client.py](/C:/Users/baska/OneDrive/Documents/New%20project/client.py).
+The repo includes a typed OpenEnv client in [client.py](client.py).
 
 Example:
 
