@@ -212,6 +212,21 @@ This repo is set up to be containerized and deployed as a Docker-based Hugging F
 4. Tag the Space with `openenv`.
 5. Verify `/health`, `/metadata`, `/schema`, `/reset`, `/step`, and `/state`.
 
+Live deployment:
+
+- Space: [prodigyhuh/metaminds-er-triage](https://huggingface.co/spaces/prodigyhuh/metaminds-er-triage)
+- Direct runtime URL: [prodigyhuh-metaminds-er-triage.hf.space](https://prodigyhuh-metaminds-er-triage.hf.space)
+
+Live runtime validation:
+
+```bash
+openenv validate --url https://prodigyhuh-metaminds-er-triage.hf.space
+```
+
+Result:
+
+- passed all 6 required runtime criteria
+
 ## Suggested Next Improvements
 
 - add `openenv validate` in CI once the `openenv` package version is pinned
