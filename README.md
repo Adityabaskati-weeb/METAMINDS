@@ -186,10 +186,12 @@ Replace the heuristic in [baselines/rule_based.py](/C:/Users/baska/OneDrive/Docu
 
 ## Trained Policy
 
-The repo now also includes a completed lightweight supervised training pipeline that produces a real model artifact:
+The repo now also includes a completed lightweight supervised training pipeline that produces a local model artifact when training is run:
 
-- model artifact: [outputs/models/er_triage_policy.joblib](/C:/Users/baska/OneDrive/Documents/New%20project/outputs/models/er_triage_policy.joblib)
+- generated model path: `outputs/models/er_triage_policy.joblib`
 - training/eval report: [outputs/evals/training_report.json](/C:/Users/baska/OneDrive/Documents/New%20project/outputs/evals/training_report.json)
+
+The binary model artifact is intentionally not committed so the same repository can be pushed cleanly to Hugging Face Spaces.
 
 Honest held-out trained-policy results:
 

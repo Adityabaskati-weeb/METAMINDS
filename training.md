@@ -87,16 +87,18 @@ The function `example_trl_grpo_loop()` returns a reference snippet showing how t
 
 This repo now includes a **completed lightweight training pipeline** that runs locally and produces:
 
-- [outputs/models/er_triage_policy.joblib](/C:/Users/baska/OneDrive/Documents/New%20project/outputs/models/er_triage_policy.joblib)
+- generated model path: `outputs/models/er_triage_policy.joblib`
 - [outputs/evals/training_report.json](/C:/Users/baska/OneDrive/Documents/New%20project/outputs/evals/training_report.json)
 
 The local trainer is implemented in [training/supervised_policy.py](/C:/Users/baska/OneDrive/Documents/New%20project/training/supervised_policy.py) and serves as the executable training artifact path for this repo.
 
 Current trained-policy evaluation artifact:
 
-- model artifact: [outputs/models/er_triage_policy.joblib](/C:/Users/baska/OneDrive/Documents/New%20project/outputs/models/er_triage_policy.joblib)
+- generated model path: `outputs/models/er_triage_policy.joblib`
 - training report: [outputs/evals/training_report.json](/C:/Users/baska/OneDrive/Documents/New%20project/outputs/evals/training_report.json)
 - trained policy evaluation now uses held-out episode groups rather than the full in-family pool
+
+The binary model file is kept local and is not committed, which keeps GitHub and Hugging Face Space pushes clean.
 
 Current held-out results:
 
