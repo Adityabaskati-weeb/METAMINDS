@@ -154,6 +154,8 @@ docker run -p 8000:8000 metaminds-er-triage
 
 Detailed deployment instructions live in [deployment.md](/C:/Users/baska/OneDrive/Documents/New%20project/deployment.md).
 
+Training scaffold details live in [training.md](/C:/Users/baska/OneDrive/Documents/New%20project/training.md).
+
 ## Baseline Inference
 
 The starter baseline is deterministic and heuristic-based so scores are reproducible. It also checks for `OPENAI_API_KEY` so the repo is ready for an API-driven agent extension later.
@@ -164,14 +166,39 @@ Run:
 python baselines/run_baseline.py
 ```
 
-Expected starter baseline scores after the first scaffold pass:
+The scaling-oriented baseline runner now evaluates multiple deterministic seeds per task and reports lightweight timing summaries.
+
+Current benchmark summary:
 
 - easy: `1.00`
-- medium: `0.62`
-- hard: `0.8233`
-- average: `0.8144`
+- medium: `0.54`
+- hard: `0.7775`
+- average: `0.7725`
+
+It also reports:
+
+- seeds evaluated per task
+- episodes evaluated per task
+- steps per episode
+- elapsed milliseconds per task and overall run
 
 Replace the heuristic in [baselines/rule_based.py](/C:/Users/baska/OneDrive/Documents/New%20project/baselines/rule_based.py) with an OpenAI-driven policy for your final submission baseline script if you want the model to act directly.
+
+## Trained Policy
+
+The repo now also includes a completed lightweight supervised training pipeline that produces a real model artifact:
+
+- model artifact: [outputs/models/er_triage_policy.joblib](/C:/Users/baska/OneDrive/Documents/New%20project/outputs/models/er_triage_policy.joblib)
+- training/eval report: [outputs/evals/training_report.json](/C:/Users/baska/OneDrive/Documents/New%20project/outputs/evals/training_report.json)
+
+Honest held-out trained-policy results:
+
+- `single_patient`: `0.89`
+- `resource_aware`: `0.05`
+- `sequential_queue`: `0.695`
+- average: `0.545`
+
+These held-out scores are intentionally more conservative than the earlier in-family trained result and better reflect generalization on unseen episode groups.
 
 ## Client Usage
 
@@ -201,6 +228,9 @@ Tests cover:
 - grader behavior
 - task progression
 - API smoke checks
+- invalid action rejection
+- post-episode step protection
+- same-seed reset determinism
 
 ## Hugging Face Spaces
 

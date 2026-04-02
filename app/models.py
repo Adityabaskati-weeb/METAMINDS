@@ -64,13 +64,6 @@ class StepInfo(BaseModel):
     episode_metrics: Dict[str, float | int] = Field(default_factory=dict)
 
 
-class StepResult(BaseModel):
-    observation: Observation
-    reward: Reward
-    done: bool
-    info: StepInfo
-
-
 class ResetRequest(OpenEnvResetRequest):
     task: TaskName = TaskName.EASY
     seed: int | None = Field(default=7, ge=0)
@@ -90,9 +83,14 @@ class BaselineRunResult(BaseModel):
     task: TaskName
     mean_score: float
     episode_scores: List[float]
-    agent_name: Literal["heuristic", "openai"]
+    agent_name: Literal["heuristic", "openai", "trained"]
 
     @field_validator("mean_score")
     @classmethod
     def clamp_mean(cls, value: float) -> float:
         return round(max(0.0, min(1.0, value)), 4)
+
+
+def extract_step_info(observation: Observation) -> StepInfo:
+    grader_payload = observation.metadata.get("grader", {})
+    return StepInfo(**grader_payload)

@@ -33,3 +33,8 @@ def test_metadata_and_schema() -> None:
     assert "action" in schema
     assert "observation" in schema
     assert "state" in schema
+
+
+def test_invalid_action_rejected() -> None:
+    response = client.post("/step", json={"triage_category": 6, "send_to_resus": False, "allocate_bed": False})
+    assert response.status_code == 422

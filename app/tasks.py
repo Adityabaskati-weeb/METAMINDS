@@ -504,3 +504,15 @@ def load_task_cases(task: TaskName, seed: int | None = None) -> List[dict]:
     episodes = TASK_EPISODES[task]
     index = 0 if seed is None else seed % len(episodes)
     return deepcopy(episodes[index])
+
+
+def task_episode_count(task: TaskName) -> int:
+    return len(TASK_EPISODES[task])
+
+
+def iter_task_episodes() -> list[tuple[TaskName, int, list[dict]]]:
+    episodes: list[tuple[TaskName, int, list[dict]]] = []
+    for task, task_episodes in TASK_EPISODES.items():
+        for seed, episode in enumerate(task_episodes):
+            episodes.append((task, seed, deepcopy(episode)))
+    return episodes

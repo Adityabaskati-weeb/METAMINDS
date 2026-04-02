@@ -1,0 +1,38 @@
+{
+  "artifact_path": "outputs\\models\\er_triage_policy.joblib",
+  "training_examples": 10,
+  "evaluation_examples": 8,
+  "eval_groups": [
+    "single_patient:2",
+    "resource_aware:2",
+    "sequential_queue:1"
+  ],
+  "group_reports": [
+    {
+      "group": "single_patient:2",
+      "triage_accuracy": 1.0,
+      "resus_accuracy": 1.0,
+      "bed_accuracy": 1.0,
+      "exact_action_accuracy": 1.0,
+      "cases": 1
+    },
+    {
+      "group": "resource_aware:2",
+      "triage_accuracy": 0.0,
+      "resus_accuracy": 0.0,
+      "bed_accuracy": 1.0,
+      "exact_action_accuracy": 0.0,
+      "cases": 1
+    },
+    {
+      "group": "sequential_queue:1",
+      "triage_accuracy": 0.5,
+      "resus_accuracy": 0.8333,
+      "bed_accuracy": 0.6667,
+      "exact_action_accuracy": 0.1667,
+      "cases": 6
+    }
+  ],
+  "heldout_exact_action_accuracy": 0.25,
+  "heldout_triage_accuracy": 0.5
+}

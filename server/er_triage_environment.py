@@ -66,19 +66,7 @@ class ERTriageEnvironment(Environment[Action, Observation, EpisodeState]):
         reward = build_reward(patient_score, components, critical_miss)
 
         self._score_sum += patient_score
-        if action.triage_category > case["gold_category"]:
-            self._metrics["under_triage"] += 1
-        elif action.triage_category < case["gold_category"]:
-            self._metrics["over_triage"] += 1
-        if patient_score >= 0.95:
-            self._metrics["correct"] += 1
-        elif patient_score > 0.0:
-            self._metrics["partial"] += 1
-        else:
-            self._metrics["wrong"] += 1
-
-        if critical_miss:
-            self._metrics["critical_misses"] += 1
+        self._update_metrics(case, action, patient_score, critical_miss)
 
         self._previous_category = action.triage_category
         self._index += 1
@@ -129,6 +117,28 @@ class ERTriageEnvironment(Environment[Action, Observation, EpisodeState]):
             version="0.1.0",
             author="METAMINDS",
         )
+
+    def _update_metrics(
+        self,
+        case: dict,
+        action: Action,
+        patient_score: float,
+        critical_miss: bool,
+    ) -> None:
+        if action.triage_category > case["gold_category"]:
+            self._metrics["under_triage"] += 1
+        elif action.triage_category < case["gold_category"]:
+            self._metrics["over_triage"] += 1
+
+        if patient_score >= 0.95:
+            self._metrics["correct"] += 1
+        elif patient_score > 0.0:
+            self._metrics["partial"] += 1
+        else:
+            self._metrics["wrong"] += 1
+
+        if critical_miss:
+            self._metrics["critical_misses"] += 1
 
     def _build_observation(self, case: dict) -> Observation:
         patients_remaining = max(0, len(self._cases) - self._index - (0 if self._done else 1))

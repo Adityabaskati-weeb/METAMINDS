@@ -1,3 +1,5 @@
+import pytest
+
 from app.models import Action, Observation, TaskName, Vitals
 
 
@@ -27,3 +29,8 @@ def test_observation_creation() -> None:
         elapsed_shift_minutes=120,
     )
     assert observation.patient_id == "p1"
+
+
+def test_action_validation_rejects_invalid_category() -> None:
+    with pytest.raises(Exception):
+        Action(triage_category=0, send_to_resus=False, allocate_bed=False)
