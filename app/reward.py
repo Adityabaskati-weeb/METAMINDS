@@ -11,5 +11,8 @@ def build_reward(patient_score: float, components: dict[str, float], critical_mi
             reasoning="Critical under-triage detected; reward forced to zero for safety.",
         )
 
-    reasoning = "Partial-credit reward combines category accuracy, safety handling, resource use, and queue pressure."
+    reasoning = (
+        "Partial-credit reward combines category accuracy, safety handling, "
+        "resource use, queue pressure, and context-aware triage cues."
+    )
     return Reward(value=patient_score, components=components, reasoning=reasoning)

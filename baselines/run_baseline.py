@@ -5,7 +5,7 @@ import os
 from statistics import mean
 
 from app.env import ERTriageEnvironment
-from app.models import BaselineRunResult, ResetRequest, TaskName
+from app.models import BaselineRunResult, TaskName
 from baselines.rule_based import choose_action
 
 
@@ -13,15 +13,14 @@ def run_rule_baseline() -> list[BaselineRunResult]:
     env = ERTriageEnvironment()
     results: list[BaselineRunResult] = []
     for task in (TaskName.EASY, TaskName.MEDIUM, TaskName.HARD):
-        observation = env.reset(ResetRequest(task=task, seed=7))
+        observation = env.reset(seed=7, task=task)
         scores: list[float] = []
         done = False
         while not done:
             action = choose_action(observation)
-            result = env.step(action)
-            scores.append(result.info.patient_score)
-            observation = result.observation
-            done = result.done
+            observation = env.step(action)
+            scores.append(float(observation.metadata["grader"]["patient_score"]))
+            done = observation.done
         results.append(
             BaselineRunResult(
                 task=task,

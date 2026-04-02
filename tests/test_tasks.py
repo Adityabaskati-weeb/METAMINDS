@@ -1,24 +1,23 @@
 from app.env import ERTriageEnvironment
-from app.models import Action, ResetRequest, TaskName
+from app.models import Action, TaskName
 
 
 def test_easy_task_finishes_in_one_step() -> None:
     env = ERTriageEnvironment()
-    env.reset(ResetRequest(task=TaskName.EASY))
-    result = env.step(Action(triage_category=1, send_to_resus=True, allocate_bed=True))
-    assert result.done is True
-    assert result.info.gold_category == 1
+    env.reset(task=TaskName.EASY, seed=0)
+    observation = env.step(Action(triage_category=1, send_to_resus=True, allocate_bed=True))
+    assert observation.done is True
+    assert observation.metadata["grader"]["gold_category"] == 1
 
 
 def test_hard_task_tracks_progress() -> None:
     env = ERTriageEnvironment()
-    observation = env.reset(ResetRequest(task=TaskName.HARD))
+    observation = env.reset(task=TaskName.HARD, seed=0)
     steps = 0
     while True:
         action = Action(triage_category=observation.previous_category or 3, send_to_resus=False, allocate_bed=False)
-        result = env.step(action)
+        observation = env.step(action)
         steps += 1
-        if result.done:
+        if observation.done:
             break
-        observation = result.observation
-    assert steps == 5
+    assert steps == 6

@@ -1,8 +1,12 @@
 from __future__ import annotations
 
 from enum import Enum
-from typing import Dict, List, Literal, Optional
+from typing import Dict, List, Literal
 
+from openenv.core.env_server.types import Action as OpenEnvAction
+from openenv.core.env_server.types import Observation as OpenEnvObservation
+from openenv.core.env_server.types import ResetRequest as OpenEnvResetRequest
+from openenv.core.env_server.types import State as OpenEnvState
 from pydantic import BaseModel, Field, field_validator
 
 
@@ -21,19 +25,25 @@ class Vitals(BaseModel):
     temperature_c: float = Field(..., ge=30.0, le=45.0)
 
 
-class Observation(BaseModel):
+class Observation(OpenEnvObservation):
     task: TaskName
     patient_id: str
     patient_complaint: str = Field(..., min_length=1, max_length=240)
+    age_years: int = Field(..., ge=0, le=120)
+    arrival_mode: str = Field(..., min_length=2, max_length=40)
+    mental_status: str = Field(..., min_length=2, max_length=40)
+    pain_score: int = Field(..., ge=0, le=10)
     vitals: Vitals
     waiting_room: int = Field(default=0, ge=0)
     available_beds: int = Field(default=0, ge=0)
+    queue_by_acuity: List[int] = Field(default_factory=list)
+    elapsed_shift_minutes: int = Field(default=0, ge=0)
     previous_category: int = Field(default=0, ge=0, le=5)
     patients_remaining: int = Field(default=0, ge=0)
     notes: List[str] = Field(default_factory=list)
 
 
-class Action(BaseModel):
+class Action(OpenEnvAction):
     triage_category: int = Field(..., ge=1, le=5)
     send_to_resus: bool = False
     allocate_bed: bool = False
@@ -61,16 +71,12 @@ class StepResult(BaseModel):
     info: StepInfo
 
 
-class ResetRequest(BaseModel):
+class ResetRequest(OpenEnvResetRequest):
     task: TaskName = TaskName.EASY
-    seed: int = Field(default=7, ge=0)
+    seed: int | None = Field(default=7, ge=0)
 
 
-class ResetResponse(BaseModel):
-    observation: Observation
-
-
-class EpisodeState(BaseModel):
+class EpisodeState(OpenEnvState):
     episode_id: str
     task: TaskName
     step_count: int = Field(default=0, ge=0)

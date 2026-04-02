@@ -1,3 +1,12 @@
+---
+title: METAMINDS ER Triage
+emoji: 🏥
+colorFrom: red
+colorTo: blue
+sdk: docker
+app_port: 8000
+---
+
 # METAMINDS: Hospital ER Triage OpenEnv Environment
 
 METAMINDS is a real-world OpenEnv environment that simulates hospital emergency-room triage. An agent observes incoming patients, assigns an urgency category, and decides whether to escalate or allocate scarce resources. The environment is designed for hackathon judging: deterministic tasks, shaped rewards, typed models, reproducible baseline scoring, Docker support, and deployment readiness for Hugging Face Spaces.
@@ -14,8 +23,23 @@ The environment exposes the standard OpenEnv-style API:
 - `POST /step` accepts an action and returns `observation`, `reward`, `done`, and `info`.
 - `GET /state` returns the current environment state.
 - `GET /health` is a simple health check.
+- `GET /metadata` returns environment metadata.
+- `GET /schema` returns action, observation, and state schemas.
 
-Core implementation lives in [app/server.py](/C:/Users/baska/OneDrive/Documents/New%20project/app/server.py), [app/env.py](/C:/Users/baska/OneDrive/Documents/New%20project/app/env.py), and [app/models.py](/C:/Users/baska/OneDrive/Documents/New%20project/app/models.py).
+Core implementation lives in [server/app.py](/C:/Users/baska/OneDrive/Documents/New%20project/server/app.py), [server/er_triage_environment.py](/C:/Users/baska/OneDrive/Documents/New%20project/server/er_triage_environment.py), [app/models.py](/C:/Users/baska/OneDrive/Documents/New%20project/app/models.py), and [client.py](/C:/Users/baska/OneDrive/Documents/New%20project/client.py).
+
+## Project Layout
+
+This repository now follows the OpenEnv environment scaffold more closely:
+
+- [__init__.py](/C:/Users/baska/OneDrive/Documents/New%20project/__init__.py) exports the public package API
+- [client.py](/C:/Users/baska/OneDrive/Documents/New%20project/client.py) provides a typed `EnvClient`
+- [app/models.py](/C:/Users/baska/OneDrive/Documents/New%20project/app/models.py) defines action, observation, reward, and state models
+- [server/er_triage_environment.py](/C:/Users/baska/OneDrive/Documents/New%20project/server/er_triage_environment.py) implements the environment logic
+- [server/app.py](/C:/Users/baska/OneDrive/Documents/New%20project/server/app.py) exposes the FastAPI/OpenEnv server
+- [server/requirements.txt](/C:/Users/baska/OneDrive/Documents/New%20project/server/requirements.txt) contains container runtime dependencies
+- [openenv.yaml](/C:/Users/baska/OneDrive/Documents/New%20project/openenv.yaml) declares the environment manifest
+- [outputs](/C:/Users/baska/OneDrive/Documents/New%20project/outputs) stores runtime logs and evaluation artifacts
 
 ## Action Space
 
@@ -42,9 +66,15 @@ Example:
 - `task`
 - `patient_id`
 - `patient_complaint`
+- `age_years`
+- `arrival_mode`
+- `mental_status`
+- `pain_score`
 - `vitals`
 - `waiting_room`
 - `available_beds`
+- `queue_by_acuity`
+- `elapsed_shift_minutes`
 - `previous_category`
 - `patients_remaining`
 - `notes`
@@ -67,15 +97,15 @@ Vitals include heart rate, blood pressure, oxygen saturation, respiratory rate, 
 
 ### 1. Easy: Single Patient
 
-One patient, one triage decision. This validates core classification and critical escalation.
+One patient, one triage decision. These scenarios focus on clean triage categorization for clearly recognizable presentations such as acute coronary syndrome, stroke-alert symptoms, and low-acuity orthopedic injury.
 
 ### 2. Medium: Resource Aware
 
-Adds queue pressure and bed constraints. The agent still triages correctly, but must also behave safely when resources are unavailable.
+Adds queue pressure, bed constraints, pediatric cases, and ambulance arrivals. The agent must still triage correctly, but also behave safely when monitored beds are scarce or the waiting room is overloaded.
 
 ### 3. Hard: Sequential Queue
 
-A five-patient episode with changing acuity and limited capacity. The final score reflects consistency over the whole sequence.
+A six-patient episode with changing acuity, evolving queue pressure, and repeated competition for monitored care. The final score reflects consistent decision quality across a realistic shift slice instead of a single isolated case.
 
 ## Reward Design
 
@@ -95,7 +125,8 @@ Grading logic is implemented in [app/graders.py](/C:/Users/baska/OneDrive/Docume
 python -m venv .venv
 . .venv/bin/activate
 pip install -r requirements.txt
-uvicorn app.server:app --host 0.0.0.0 --port 7860
+pip install -e .
+uvicorn server.app:app --host 0.0.0.0 --port 8000
 ```
 
 On Windows PowerShell:
@@ -104,15 +135,24 @@ On Windows PowerShell:
 python -m venv .venv
 .venv\Scripts\Activate.ps1
 pip install -r requirements.txt
-uvicorn app.server:app --host 0.0.0.0 --port 7860
+pip install -e .
+uvicorn server.app:app --host 0.0.0.0 --port 8000
+```
+
+You can also run the environment through the OpenEnv-style script entrypoint:
+
+```bash
+uv run server --host 0.0.0.0 --port 8000
 ```
 
 ## Docker
 
 ```bash
 docker build -t metaminds-er-triage .
-docker run -p 7860:7860 metaminds-er-triage
+docker run -p 8000:8000 metaminds-er-triage
 ```
+
+Detailed deployment instructions live in [deployment.md](/C:/Users/baska/OneDrive/Documents/New%20project/deployment.md).
 
 ## Baseline Inference
 
@@ -126,11 +166,28 @@ python baselines/run_baseline.py
 
 Expected starter baseline scores after the first scaffold pass:
 
-- easy: around `0.95-1.00`
-- medium: around `0.70-0.90`
-- hard: around `0.55-0.80`
+- easy: `1.00`
+- medium: `0.62`
+- hard: `0.8233`
+- average: `0.8144`
 
 Replace the heuristic in [baselines/rule_based.py](/C:/Users/baska/OneDrive/Documents/New%20project/baselines/rule_based.py) with an OpenAI-driven policy for your final submission baseline script if you want the model to act directly.
+
+## Client Usage
+
+The repo includes a typed OpenEnv client in [client.py](/C:/Users/baska/OneDrive/Documents/New%20project/client.py).
+
+Example:
+
+```python
+from app.models import Action
+from client import ERTriageEnv
+
+with ERTriageEnv(base_url="http://localhost:8000").sync() as client:
+    result = client.reset()
+    result = client.step(Action(triage_category=2, send_to_resus=True, allocate_bed=False))
+    print(result.reward, result.done)
+```
 
 ## Testing
 
@@ -153,7 +210,7 @@ This repo is set up to be containerized and deployed as a Docker-based Hugging F
 2. Create a new Docker Space on Hugging Face.
 3. Import the repo or mirror these files into the Space.
 4. Tag the Space with `openenv`.
-5. Verify `/health`, `/reset`, `/step`, and `/state`.
+5. Verify `/health`, `/metadata`, `/schema`, `/reset`, `/step`, and `/state`.
 
 ## Suggested Next Improvements
 
