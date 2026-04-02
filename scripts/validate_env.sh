@@ -2,5 +2,5 @@
 set -euo pipefail
 
 python -m pytest
-# If openenv is installed in the runtime, add:
-# openenv validate .
+openenv validate --json
+python scripts/validate_submission.py

@@ -158,31 +158,47 @@ Training scaffold details live in [training.md](/C:/Users/baska/OneDrive/Documen
 
 ## Baseline Inference
 
-The starter baseline is deterministic and heuristic-based so scores are reproducible. It also checks for `OPENAI_API_KEY` so the repo is ready for an API-driven agent extension later.
+The submission entrypoint is [inference.py](/C:/Users/baska/OneDrive/Documents/New%20project/inference.py) in the repository root.
+
+Required environment variables:
+
+- `API_BASE_URL`: OpenAI-compatible LLM endpoint
+- `MODEL_NAME`: model identifier used for inference
+- `HF_TOKEN`: API token passed into the OpenAI client
+- `LOCAL_IMAGE_NAME`: optional local image name if you adapt the environment to a docker-image OpenEnv loader
 
 Run:
+
+```bash
+python inference.py
+```
+
+The script uses the OpenAI Python client against the configured endpoint and emits the required single-line stdout format:
+
+```text
+[START] task=<task_name> env=<benchmark> model=<model_name>
+[STEP] step=<n> action=<action_str> reward=<0.00> done=<true|false> error=<msg|null>
+[END] success=<true|false> steps=<n> rewards=<r1,r2,...,rn>
+```
+
+By default it runs one benchmark episode selected through `METAMINDS_TASK`. Set `METAMINDS_TASK` to one of:
+
+- `single_patient`
+- `resource_aware`
+- `sequential_queue`
+
+For local non-LLM benchmarking, the deterministic heuristic benchmark is still available:
 
 ```bash
 python baselines/run_baseline.py
 ```
 
-The scaling-oriented baseline runner now evaluates multiple deterministic seeds per task and reports lightweight timing summaries.
-
-Current benchmark summary:
+Current heuristic benchmark summary:
 
 - easy: `1.00`
 - medium: `0.54`
 - hard: `0.7775`
 - average: `0.7725`
-
-It also reports:
-
-- seeds evaluated per task
-- episodes evaluated per task
-- steps per episode
-- elapsed milliseconds per task and overall run
-
-Replace the heuristic in [baselines/rule_based.py](/C:/Users/baska/OneDrive/Documents/New%20project/baselines/rule_based.py) with an OpenAI-driven policy for your final submission baseline script if you want the model to act directly.
 
 ## Trained Policy
 
@@ -222,6 +238,13 @@ with ERTriageEnv(base_url="http://localhost:8000").sync() as client:
 
 ```bash
 pytest
+```
+
+Pre-submission validation:
+
+```bash
+python scripts/validate_submission.py
+./scripts/validate-submission.sh https://prodigyhuh-metaminds-er-triage.hf.space
 ```
 
 Tests cover:
