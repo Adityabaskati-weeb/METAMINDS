@@ -3,6 +3,7 @@ from __future__ import annotations
 import argparse
 import json
 import os
+import sys
 from typing import Any
 
 from openai import OpenAI
@@ -36,6 +37,8 @@ Safety rules:
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description="Run OpenAI inference for the METAMINDS OpenEnv environment.")
     parser.add_argument("--smoke-run", action="store_true", help="Run a single deterministic episode for validation.")
+    parser.add_argument("--task", type=str, default=None, help="Override METAMINDS_TASK for this run.")
+    parser.add_argument("--seed", type=int, default=0, help="Episode seed to use for the run.")
     return parser.parse_args()
 
 
@@ -166,8 +169,11 @@ def run_episode(task: TaskName, seed: int = 0) -> bool:
 def main() -> None:
     args = parse_args()
     _ = LOCAL_IMAGE_NAME
-    task = normalize_task(TASK_NAME)
-    run_episode(task=task, seed=0 if args.smoke_run else 0)
+    task_name = args.task or TASK_NAME
+    task = normalize_task(task_name)
+    success = run_episode(task=task, seed=args.seed if not args.smoke_run else 0)
+    if not success:
+        raise SystemExit(1)
 
 
 if __name__ == "__main__":

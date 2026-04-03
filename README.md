@@ -173,6 +173,14 @@ Run:
 python inference.py
 ```
 
+Examples:
+
+```bash
+METAMINDS_TASK=single_patient python inference.py
+METAMINDS_TASK=resource_aware python inference.py
+METAMINDS_TASK=sequential_queue python inference.py
+```
+
 The script uses the OpenAI Python client against the configured endpoint and emits the required single-line stdout format:
 
 ```text
