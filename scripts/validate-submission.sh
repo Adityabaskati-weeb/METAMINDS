@@ -50,7 +50,8 @@ python inference.py --smoke-run >/dev/null || { echo "${RED}inference.py smoke r
 
 echo "${BOLD}8. Building Docker image...${NC}"
 timeout "$DOCKER_BUILD_TIMEOUT" docker build -t metaminds-er-triage . >/dev/null || {
-  echo "${YELLOW}Docker build check skipped or failed in this environment${NC}"
+  echo "${RED}Docker build failed${NC}"
+  exit 1
 }
 
 echo "${GREEN}Submission validation checks completed.${NC}"
