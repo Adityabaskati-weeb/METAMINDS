@@ -208,6 +208,13 @@ Current heuristic benchmark summary:
 - hard: `0.7775`
 - average: `0.7725`
 
+Benchmark table:
+
+| Run Type | single_patient | resource_aware | sequential_queue | average |
+| --- | ---: | ---: | ---: | ---: |
+| Heuristic baseline | 1.00 | 0.54 | 0.7775 | 0.7725 |
+| Trained policy (held-out) | 0.89 | 0.05 | 0.695 | 0.545 |
+
 ## Trained Policy
 
 The repo now also includes a completed lightweight supervised training pipeline that produces a local model artifact when training is run:
@@ -289,6 +296,12 @@ openenv validate --url https://prodigyhuh-metaminds-er-triage.hf.space
 Result:
 
 - passed all 6 required runtime criteria
+
+## Submission Links
+
+- GitHub: [Adityabaskati-weeb/METAMINDS](https://github.com/Adityabaskati-weeb/METAMINDS)
+- Hugging Face Space: [prodigyhuh/metaminds-er-triage](https://huggingface.co/spaces/prodigyhuh/metaminds-er-triage)
+- Direct runtime: [prodigyhuh-metaminds-er-triage.hf.space](https://prodigyhuh-metaminds-er-triage.hf.space)
 
 ## Suggested Next Improvements
 
