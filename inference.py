@@ -132,8 +132,9 @@ def print_step(step: int, action_str: str, reward: float, done: bool, error: str
 
 def print_end(success: bool, rewards: list[float]) -> None:
     rewards_str = ",".join(format_reward(reward) for reward in rewards)
+    score = 0.0 if not rewards else max(0.0, min(1.0, sum(rewards) / len(rewards)))
     print(
-        f"[END] success={format_bool(success)} steps={len(rewards)} rewards={rewards_str}",
+        f"[END] success={format_bool(success)} steps={len(rewards)} score={format_reward(score)} rewards={rewards_str}",
         flush=True,
     )
 
@@ -162,6 +163,9 @@ def run_episode(task: TaskName, seed: int = 0) -> bool:
     except Exception as exc:
         print_step(len(rewards) + 1, "error()", 0.0, False, str(exc))
     finally:
+        close_fn = getattr(env, "close", None)
+        if callable(close_fn):
+            close_fn()
         print_end(success, rewards)
     return success
 

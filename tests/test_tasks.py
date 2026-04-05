@@ -2,6 +2,7 @@ import pytest
 
 from app.env import ERTriageEnvironment
 from app.models import Action, TaskName
+from app.tasks import task_episode_count
 
 
 def test_easy_task_finishes_in_one_step() -> None:
@@ -39,3 +40,7 @@ def test_reset_is_deterministic_for_same_seed() -> None:
     second = env.reset(task=TaskName.HARD, seed=1)
     assert first.patient_id == second.patient_id
     assert first.patient_complaint == second.patient_complaint
+
+
+def test_medium_task_has_broader_episode_bank() -> None:
+    assert task_episode_count(TaskName.MEDIUM) >= 7
