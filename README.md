@@ -9,11 +9,11 @@ app_port: 8000
 
 # METAMINDS: Hospital ER Triage OpenEnv Environment
 
-METAMINDS is a real-world OpenEnv environment that simulates hospital emergency-room triage. An agent observes incoming patients, assigns an urgency category, and decides whether to escalate or allocate scarce resources. The environment is designed for hackathon judging: deterministic tasks, shaped rewards, typed models, reproducible baseline scoring, Docker support, and deployment readiness for Hugging Face Spaces.
+METAMINDS is a real-world OpenEnv environment that simulates hospital emergency-room triage. An agent observes incoming patients, assigns an urgency category, and decides whether to escalate or allocate scarce resources. The environment is designed for : deterministic tasks, shaped rewards, typed models, reproducible baseline scoring, Docker support, and deployment readiness for Hugging Face Spaces.
 
 ## Why This Environment
 
-ER triage is a realistic workflow carried out by nurses and emergency clinicians every day. It is safety-critical, resource-constrained, and naturally supports partial-credit evaluation. That makes it a good fit for OpenEnv: the agent must reason about patient severity, queue pressure, and limited beds instead of solving a toy problem.
+ER triage is a realistic workflow carried out by nurses and emergency clinicians every day. It is safety-critical, resource-constrained, and naturally supports partial-credit evaluation.The agent must reason about patient severity, queue pressure, and limited beds instead of solving a toy problem.
 
 ## Environment API
 
@@ -30,7 +30,7 @@ Core implementation lives in [server/app.py](server/app.py), [server/er_triage_e
 
 ## Project Layout
 
-This repository now follows the OpenEnv environment scaffold more closely:
+This repository  follows :
 
 - [__init__.py](__init__.py) exports the public package API
 - [client.py](client.py) provides a typed `EnvClient`
