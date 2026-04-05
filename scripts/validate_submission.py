@@ -39,6 +39,7 @@ def main() -> None:
     end_lines = [line for line in stdout_lines if line.startswith("[END] ")]
     _ensure(len(end_lines) == 1, "inference.py must emit exactly one [END] line")
     _ensure("success=true" in end_lines[0], "inference.py smoke run did not finish successfully")
+    _ensure(" score=" in end_lines[0], "inference.py [END] line must include score=<score>")
     print("Submission validation checks passed.")
 
 

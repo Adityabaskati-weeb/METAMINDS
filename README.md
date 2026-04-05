@@ -186,7 +186,7 @@ The script uses the OpenAI Python client against the configured endpoint and emi
 ```text
 [START] task=<task_name> env=<benchmark> model=<model_name>
 [STEP] step=<n> action=<action_str> reward=<0.00> done=<true|false> error=<msg|null>
-[END] success=<true|false> steps=<n> rewards=<r1,r2,...,rn>
+[END] success=<true|false> steps=<n> score=<score> rewards=<r1,r2,...,rn>
 ```
 
 By default it runs one benchmark episode selected through `METAMINDS_TASK`. Set `METAMINDS_TASK` to one of:
@@ -203,17 +203,17 @@ python baselines/run_baseline.py
 
 Current heuristic benchmark summary:
 
-- easy: `1.00`
-- medium: `0.54`
-- hard: `0.7775`
-- average: `0.7725`
+- easy: `0.9633`
+- medium: `0.7033`
+- hard: `0.8375`
+- average: `0.8347`
 
 Benchmark table:
 
 | Run Type | single_patient | resource_aware | sequential_queue | average |
 | --- | ---: | ---: | ---: | ---: |
-| Heuristic baseline | 1.00 | 0.54 | 0.7775 | 0.7725 |
-| Trained policy (held-out) | 0.89 | 0.05 | 0.695 | 0.545 |
+| Heuristic baseline | 0.9633 | 0.7033 | 0.8375 | 0.8347 |
+| Trained policy (held-out) | 0.89 | 0.55 | 0.695 | 0.7117 |
 
 ## Trained Policy
 
@@ -227,9 +227,9 @@ The binary model artifact is intentionally not committed so the same repository 
 Honest held-out trained-policy results:
 
 - `single_patient`: `0.89`
-- `resource_aware`: `0.05`
+- `resource_aware`: `0.55`
 - `sequential_queue`: `0.695`
-- average: `0.545`
+- average: `0.7117`
 
 These held-out scores are intentionally more conservative than the earlier in-family trained result and better reflect generalization on unseen episode groups.
 
