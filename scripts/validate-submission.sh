@@ -46,7 +46,7 @@ test -n "${MODEL_NAME:-}" || { echo "${RED}Missing MODEL_NAME${NC}"; exit 1; }
 test -n "${HF_TOKEN:-}" || { echo "${RED}Missing HF_TOKEN${NC}"; exit 1; }
 
 echo "${BOLD}7. Running submission smoke inference...${NC}"
-python inference.py --smoke-run >/dev/null || { echo "${RED}inference.py smoke run failed${NC}"; exit 1; }
+python inference.py --smoke-run --task single_patient >/dev/null || { echo "${RED}inference.py smoke run failed${NC}"; exit 1; }
 
 echo "${BOLD}8. Building Docker image...${NC}"
 timeout "$DOCKER_BUILD_TIMEOUT" docker build -t metaminds-er-triage . >/dev/null || {

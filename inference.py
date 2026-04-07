@@ -16,10 +16,11 @@ LOCAL_IMAGE_NAME = os.getenv("LOCAL_IMAGE_NAME") or os.getenv("IMAGE_NAME")
 API_KEY = os.getenv("HF_TOKEN") or os.getenv("API_KEY")
 API_BASE_URL = os.getenv("API_BASE_URL") or "https://router.huggingface.co/v1"
 MODEL_NAME = os.getenv("MODEL_NAME") or "Qwen/Qwen2.5-72B-Instruct"
-TASK_NAME = os.getenv("METAMINDS_TASK", TaskName.EASY.value)
+TASK_NAME = os.getenv("METAMINDS_TASK")
 BENCHMARK = os.getenv("METAMINDS_BENCHMARK", "metaminds_er_triage")
 MAX_STEPS = 8
 TEMPERATURE = 0.0
+SCORE_EPSILON = 0.01
 
 SYSTEM_PROMPT = """You are an ER triage assistant.
 Return only compact JSON with keys:
@@ -132,7 +133,8 @@ def print_step(step: int, action_str: str, reward: float, done: bool, error: str
 
 def print_end(success: bool, rewards: list[float]) -> None:
     rewards_str = ",".join(format_reward(reward) for reward in rewards)
-    score = 0.0 if not rewards else max(0.0, min(1.0, sum(rewards) / len(rewards)))
+    raw_score = 0.0 if not rewards else max(0.0, min(1.0, sum(rewards) / len(rewards)))
+    score = SCORE_EPSILON + (1.0 - 2 * SCORE_EPSILON) * raw_score
     print(
         f"[END] success={format_bool(success)} steps={len(rewards)} score={format_reward(score)} rewards={rewards_str}",
         flush=True,
@@ -170,14 +172,23 @@ def run_episode(task: TaskName, seed: int = 0) -> bool:
     return success
 
 
+def run_selected_tasks(task_names: list[str], seed: int) -> int:
+    exit_code = 0
+    for task_name in task_names:
+        task = normalize_task(task_name)
+        success = run_episode(task=task, seed=seed)
+        if not success:
+            exit_code = 1
+    return exit_code
+
+
 def main() -> None:
     args = parse_args()
     _ = LOCAL_IMAGE_NAME
     task_name = args.task or TASK_NAME
-    task = normalize_task(task_name)
-    success = run_episode(task=task, seed=args.seed if not args.smoke_run else 0)
-    if not success:
-        raise SystemExit(1)
+    seed = args.seed if not args.smoke_run else 0
+    task_names = [task_name] if task_name else [task.value for task in TaskName]
+    raise SystemExit(run_selected_tasks(task_names, seed))
 
 
 if __name__ == "__main__":

@@ -24,7 +24,7 @@ def main() -> None:
     _ensure(not missing, f"Missing required environment variables: {', '.join(missing)}")
 
     completed = subprocess.run(
-        [sys.executable, "inference.py", "--smoke-run"],
+        [sys.executable, "inference.py", "--smoke-run", "--task", "single_patient"],
         cwd=ROOT,
         check=False,
         capture_output=True,

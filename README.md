@@ -176,6 +176,7 @@ python inference.py
 Examples:
 
 ```bash
+python inference.py
 METAMINDS_TASK=single_patient python inference.py
 METAMINDS_TASK=resource_aware python inference.py
 METAMINDS_TASK=sequential_queue python inference.py
@@ -189,7 +190,7 @@ The script uses the OpenAI Python client against the configured endpoint and emi
 [END] success=<true|false> steps=<n> score=<score> rewards=<r1,r2,...,rn>
 ```
 
-By default it runs one benchmark episode selected through `METAMINDS_TASK`. Set `METAMINDS_TASK` to one of:
+By default it runs one episode for each of the 3 tasks. To force a single task, set `METAMINDS_TASK` to one of:
 
 - `single_patient`
 - `resource_aware`
