@@ -4,3 +4,5 @@ __pycache__/
 *.pyc
 .venv/
 outputs/models/*.joblib
+.hf-space-push/
+.hf-space-sync*/

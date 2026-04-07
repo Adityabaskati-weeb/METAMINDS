@@ -1,16 +1,16 @@
-FROM python:3.11-slim
+FROM python:3.11.15-slim-trixie
 
 RUN useradd -m -u 1000 user
 USER user
 ENV HOME=/home/user \
-    PATH=/home/user/.local/bin:$PATH
+    PATH=/home/user/.local/bin:$PATH \
+    PIP_DISABLE_PIP_VERSION_CHECK=1 \
+    PIP_NO_CACHE_DIR=1
 WORKDIR $HOME/app
 
-COPY --chown=user pyproject.toml .
-COPY --chown=user uv.lock .
 COPY --chown=user server/requirements.txt ./server/requirements.txt
-RUN pip install --no-cache-dir --upgrade pip
-RUN pip install --no-cache-dir -r server/requirements.txt
+RUN python -m pip install --upgrade pip && \
+    python -m pip install -r server/requirements.txt
 
 COPY --chown=user __init__.py .
 COPY --chown=user client.py .
