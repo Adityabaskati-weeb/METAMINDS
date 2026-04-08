@@ -143,12 +143,12 @@ def print_end(success: bool, rewards: list[float]) -> None:
 
 def run_episode(task: TaskName, seed: int = 0) -> bool:
     env = ERTriageEnvironment()
-    client = make_client()
     rewards: list[float] = []
     success = False
 
     print_start(task.value)
     try:
+        client = make_client()
         observation = env.reset(seed=seed, task=task)
         for step in range(1, MAX_STEPS + 1):
             action = request_action(client, observation)
@@ -167,19 +167,29 @@ def run_episode(task: TaskName, seed: int = 0) -> bool:
     finally:
         close_fn = getattr(env, "close", None)
         if callable(close_fn):
-            close_fn()
+            try:
+                close_fn()
+            except Exception:
+                pass
         print_end(success, rewards)
     return success
 
 
-def run_selected_tasks(task_names: list[str], seed: int) -> int:
-    exit_code = 0
+def run_selected_tasks(task_names: list[str], seed: int) -> bool:
+    all_successful = True
     for task_name in task_names:
-        task = normalize_task(task_name)
+        try:
+            task = normalize_task(task_name)
+        except Exception as exc:
+            print_start(task_name)
+            print_step(1, "error()", 0.0, False, str(exc))
+            print_end(False, [])
+            all_successful = False
+            continue
         success = run_episode(task=task, seed=seed)
         if not success:
-            exit_code = 1
-    return exit_code
+            all_successful = False
+    return all_successful
 
 
 def main() -> None:
@@ -188,7 +198,12 @@ def main() -> None:
     task_name = args.task or TASK_NAME
     seed = args.seed if not args.smoke_run else 0
     task_names = [task_name] if task_name else [task.value for task in TaskName]
-    raise SystemExit(run_selected_tasks(task_names, seed))
+    try:
+        run_selected_tasks(task_names, seed)
+    except Exception as exc:
+        print_start(task_name or "all_tasks")
+        print_step(1, "error()", 0.0, False, str(exc))
+        print_end(False, [])
 
 
 if __name__ == "__main__":
