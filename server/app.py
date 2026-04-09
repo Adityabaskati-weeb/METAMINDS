@@ -356,10 +356,46 @@ def root() -> str:
             width: 100%;
             border: 1px solid var(--line);
             border-radius: 12px;
-            background: rgba(255, 255, 255, 0.86);
-            padding: 11px 12px;
+            background: #071107;
+            padding: 11px 36px 11px 12px;
             color: var(--text);
             font: inherit;
+            color-scheme: dark;
+          }
+
+          select {
+            appearance: none;
+            background-image:
+              linear-gradient(45deg, transparent 50%, var(--success) 50%),
+              linear-gradient(135deg, var(--success) 50%, transparent 50%),
+              linear-gradient(to right, rgba(0,204,0,0.16), rgba(0,204,0,0.16));
+            background-position:
+              calc(100% - 18px) 50%,
+              calc(100% - 12px) 50%,
+              calc(100% - 34px) 50%;
+            background-size:
+              6px 6px,
+              6px 6px,
+              1px 60%;
+            background-repeat: no-repeat;
+          }
+
+          select:focus,
+          input:focus {
+            outline: none;
+            border-color: var(--success);
+            box-shadow: 0 0 0 3px rgba(0,204,0,0.16);
+          }
+
+          select option {
+            background: #071107;
+            color: #e8f5e9;
+          }
+
+          select option:checked,
+          select option:hover {
+            background: #003300;
+            color: #ffffff;
           }
 
           .button-row {
