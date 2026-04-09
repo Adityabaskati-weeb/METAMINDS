@@ -59,45 +59,53 @@ def root() -> str:
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <style>
           :root {
-            --bg: #f5efe4;
-            --surface: rgba(255, 255, 255, 0.82);
-            --surface-strong: rgba(255, 255, 255, 0.96);
-            --text: #17110d;
-            --muted: #6b625a;
-            --line: rgba(22, 22, 22, 0.12);
-            --accent: #b4352c;
-            --accent-dark: #7e211b;
-            --accent-soft: #f5d7d1;
-            --ink: #173f45;
-            --success: #1c7c54;
-            --warn: #c07b21;
-            --shadow: 0 20px 60px rgba(26, 18, 11, 0.10);
+            --bg: #050805;
+            --surface: rgba(8, 18, 10, 0.70);
+            --surface-strong: rgba(8, 18, 10, 0.90);
+            --text: #e8f5e9;
+            --muted: #a5d6a7;
+            --line: rgba(0, 153, 0, 0.18);
+            --accent: #00cc66;
+            --accent-dark: #003300;
+            --accent-soft: rgba(0, 153, 0, 0.14);
+            --ink: #a8dadc;
+            --success: #00cc00;
+            --warn: #ffb703;
+            --danger: #e63946;
+            --shadow: 0 4px 28px rgba(0,0,0,0.62);
           }
 
           * { box-sizing: border-box; }
 
           body {
             margin: 0;
-            font-family: "Segoe UI", "Aptos", sans-serif;
+            font-family: "Inter", "Segoe UI", "Aptos", sans-serif;
             color: var(--text);
             background:
-              radial-gradient(circle at top left, rgba(178, 58, 47, 0.18), transparent 32%),
-              radial-gradient(circle at bottom right, rgba(23, 63, 69, 0.18), transparent 30%),
-              linear-gradient(180deg, #fbf7f1 0%, var(--bg) 100%);
+              radial-gradient(ellipse at 15% 25%, rgba(0,153,0,0.10) 0%, transparent 48%),
+              radial-gradient(ellipse at 85% 75%, rgba(0,204,102,0.07) 0%, transparent 48%),
+              linear-gradient(180deg, #050805 0%, #071107 100%);
           }
 
           .shell {
-            max-width: 1080px;
+            max-width: 1460px;
             margin: 0 auto;
-            padding: 40px 20px 56px;
+            padding: 14px;
           }
 
           .topbar {
+            position: sticky;
+            top: 0;
+            z-index: 20;
             display: flex;
             justify-content: space-between;
             align-items: center;
             gap: 16px;
-            margin-bottom: 18px;
+            margin: -14px -14px 14px;
+            padding: 10px 24px;
+            background: rgba(5, 8, 5, 0.90);
+            border-bottom: 1px solid var(--line);
+            backdrop-filter: blur(18px) saturate(140%);
           }
 
           .brand {
@@ -111,10 +119,10 @@ def root() -> str:
           .brand-mark {
             width: 34px;
             height: 34px;
-            border-radius: 11px;
+            border-radius: 8px;
             display: grid;
             place-items: center;
-            background: var(--accent);
+            background: linear-gradient(135deg, var(--success), var(--accent-dark));
             color: white;
             font-weight: 900;
           }
@@ -123,18 +131,18 @@ def root() -> str:
             padding: 8px 12px;
             border: 1px solid var(--line);
             border-radius: 999px;
-            background: rgba(255, 255, 255, 0.74);
+            background: rgba(255, 255, 255, 0.03);
             color: var(--success);
             font-size: 13px;
             font-weight: 800;
           }
 
           .hero {
-            background: linear-gradient(135deg, rgba(255,255,255,0.95), rgba(255,255,255,0.72));
+            background: linear-gradient(135deg, rgba(8,18,10,0.94), rgba(8,18,10,0.68));
             border: 1px solid var(--line);
-            border-radius: 28px;
+            border-radius: 10px;
             box-shadow: var(--shadow);
-            padding: 34px;
+            padding: 22px;
             overflow: hidden;
             position: relative;
           }
@@ -147,15 +155,15 @@ def root() -> str:
             width: 240px;
             height: 240px;
             border-radius: 50%;
-            background: radial-gradient(circle, rgba(178, 58, 47, 0.22), transparent 65%);
+            background: radial-gradient(circle, rgba(0, 204, 102, 0.18), transparent 65%);
           }
 
           .eyebrow {
             display: inline-block;
             padding: 7px 12px;
             border-radius: 999px;
-            background: var(--accent-soft);
-            color: var(--accent);
+            background: rgba(0,153,0,0.15);
+            color: var(--success);
             font-size: 12px;
             font-weight: 700;
             letter-spacing: 0.08em;
@@ -165,7 +173,7 @@ def root() -> str:
 
           h1 {
             margin: 0 0 12px;
-            font-size: clamp(36px, 5vw, 58px);
+            font-size: clamp(32px, 4vw, 48px);
             line-height: 0.98;
             letter-spacing: -0.04em;
           }
@@ -198,9 +206,17 @@ def root() -> str:
           .endpoint {
             background: var(--surface);
             border: 1px solid var(--line);
-            border-radius: 20px;
+            border-radius: 10px;
             padding: 18px;
             backdrop-filter: blur(10px);
+          }
+
+          .stat:hover,
+          .card:hover,
+          .panel:hover,
+          .endpoint:hover {
+            border-color: rgba(0, 204, 0, 0.36);
+            box-shadow: 0 0 18px rgba(0,153,0,0.09);
           }
 
           .stat strong {
@@ -229,6 +245,89 @@ def root() -> str:
           .panel {
             padding: 20px;
           }
+
+          .command-layout {
+            display: grid;
+            grid-template-columns: minmax(0, 1.45fr) minmax(340px, 0.55fr);
+            gap: 16px;
+            margin-top: 16px;
+            align-items: stretch;
+          }
+
+          .flow-map {
+            position: relative;
+            min-height: 360px;
+            border-radius: 10px;
+            overflow: hidden;
+            background:
+              linear-gradient(rgba(0,153,0,0.05) 1px, transparent 1px),
+              linear-gradient(90deg, rgba(0,153,0,0.05) 1px, transparent 1px),
+              radial-gradient(circle at center, rgba(0,204,0,0.08), transparent 58%),
+              rgba(5, 8, 5, 0.70);
+            background-size: 36px 36px, 36px 36px, auto, auto;
+            border: 1px solid var(--line);
+          }
+
+          .flow-edge {
+            position: absolute;
+            height: 2px;
+            transform-origin: left center;
+            background: linear-gradient(90deg, rgba(0,204,0,0.08), rgba(0,204,0,0.65), rgba(0,204,0,0.08));
+            box-shadow: 0 0 12px rgba(0,204,0,0.20);
+          }
+
+          .flow-node {
+            position: absolute;
+            width: 112px;
+            min-height: 72px;
+            transform: translate(-50%, -50%);
+            display: grid;
+            place-items: center;
+            text-align: center;
+            gap: 4px;
+            padding: 10px;
+            border-radius: 14px;
+            background: rgba(8, 18, 10, 0.92);
+            border: 1px solid rgba(0,204,0,0.26);
+            box-shadow: 0 0 22px rgba(0,153,0,0.12);
+          }
+
+          .flow-node strong {
+            display: block;
+            color: var(--text);
+            font-size: 13px;
+          }
+
+          .flow-node span {
+            color: var(--muted);
+            font-size: 11px;
+            font-weight: 700;
+          }
+
+          .flow-node.hot {
+            border-color: rgba(230,57,70,0.62);
+            box-shadow: 0 0 24px rgba(230,57,70,0.22);
+          }
+
+          .flow-node.warn {
+            border-color: rgba(255,183,3,0.62);
+            box-shadow: 0 0 24px rgba(255,183,3,0.18);
+          }
+
+          .flow-node.good {
+            border-color: rgba(0,204,0,0.62);
+          }
+
+          .pulse-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: var(--success);
+            box-shadow: 0 0 10px var(--success);
+            animation: blink 1.2s infinite;
+          }
+
+          @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.35} }
 
           .panel h3 {
             margin: 0 0 12px;
@@ -272,29 +371,32 @@ def root() -> str:
 
           button {
             border: 0;
-            border-radius: 14px;
+            border-radius: 6px;
             padding: 11px 15px;
             cursor: pointer;
-            background: var(--accent);
+            background: rgba(0,153,0,0.18);
             color: white;
             font-weight: 800;
             font: inherit;
-            box-shadow: 0 10px 24px rgba(180, 53, 44, 0.18);
+            border: 1px solid rgba(0,204,0,0.28);
+            box-shadow: none;
           }
 
           button.secondary {
-            background: var(--ink);
-            box-shadow: 0 10px 24px rgba(23, 63, 69, 0.14);
+            background: rgba(168,218,220,0.12);
+            color: var(--ink);
+            border-color: rgba(168,218,220,0.26);
           }
 
           button.ghost {
-            background: rgba(23, 63, 69, 0.09);
-            color: var(--ink);
+            background: rgba(255,183,3,0.12);
+            color: var(--warn);
+            border-color: rgba(255,183,3,0.24);
             box-shadow: none;
           }
 
           .patient-card {
-            border-radius: 20px;
+            border-radius: 10px;
             background: var(--surface-strong);
             border: 1px solid var(--line);
             padding: 18px;
@@ -319,8 +421,8 @@ def root() -> str:
             display: inline-block;
             padding: 7px 10px;
             border-radius: 999px;
-            background: var(--accent-soft);
-            color: var(--accent-dark);
+            background: rgba(0,153,0,0.16);
+            color: var(--success);
             font-size: 12px;
             font-weight: 900;
             white-space: nowrap;
@@ -335,9 +437,9 @@ def root() -> str:
 
           .vital {
             border: 1px solid rgba(23, 63, 69, 0.12);
-            border-radius: 16px;
+            border-radius: 8px;
             padding: 12px;
-            background: rgba(23, 63, 69, 0.04);
+            background: rgba(255, 255, 255, 0.03);
           }
 
           .vital span {
@@ -365,9 +467,9 @@ def root() -> str:
             margin-top: 12px;
             padding: 14px;
             border-radius: 16px;
-            background: rgba(28, 124, 84, 0.09);
-            border: 1px solid rgba(28, 124, 84, 0.18);
-            color: #174a35;
+            background: rgba(0,204,0,0.10);
+            border: 1px solid rgba(0,204,0,0.22);
+            color: var(--text);
             font-weight: 800;
           }
 
@@ -375,9 +477,9 @@ def root() -> str:
             margin-top: 12px;
             padding: 14px;
             border-radius: 16px;
-            background: rgba(180, 53, 44, 0.09);
-            border: 1px solid rgba(180, 53, 44, 0.18);
-            color: var(--accent-dark);
+            background: rgba(230,57,70,0.10);
+            border: 1px solid rgba(230,57,70,0.22);
+            color: var(--danger);
             font-weight: 800;
           }
 
@@ -507,12 +609,13 @@ def root() -> str:
             overflow: auto;
             max-height: 320px;
             margin: 0;
-            background: #17110d;
-            color: #f8efe3;
-            border-radius: 16px;
+            background: #020502;
+            color: #e8f5e9;
+            border-radius: 8px;
             padding: 16px;
             font-size: 12px;
             line-height: 1.5;
+            border: 1px solid rgba(0,153,0,0.14);
           }
 
           .card h3,
@@ -526,14 +629,14 @@ def root() -> str:
             margin-top: 10px;
             padding: 6px 10px;
             border-radius: 999px;
-            background: rgba(29, 60, 69, 0.09);
-            color: var(--ink);
+            background: rgba(0,153,0,0.14);
+            color: var(--success);
             font-size: 12px;
             font-weight: 700;
           }
 
           .endpoint a {
-            color: var(--accent);
+            color: var(--success);
             font-weight: 700;
             text-decoration: none;
           }
@@ -549,6 +652,7 @@ def root() -> str:
             .hero { padding: 24px; }
             .lede { font-size: 16px; }
             .demo-grid { grid-template-columns: 1fr; }
+            .command-layout { grid-template-columns: 1fr; }
             .patient-title { display: block; }
             .badge { margin-top: 10px; }
           }
@@ -587,6 +691,61 @@ def root() -> str:
 
           <section class="section">
             <h2>Interactive Demo</h2>
+            <div class="command-layout">
+              <div class="panel">
+                <h3>ER Flow Topology</h3>
+                <div class="flow-map" id="flowMap">
+                  <div class="flow-edge" style="left: 18%; top: 30%; width: 24%; transform: rotate(14deg);"></div>
+                  <div class="flow-edge" style="left: 40%; top: 38%; width: 24%; transform: rotate(-18deg);"></div>
+                  <div class="flow-edge" style="left: 41%; top: 42%; width: 25%; transform: rotate(22deg);"></div>
+                  <div class="flow-edge" style="left: 18%; top: 67%; width: 26%; transform: rotate(-16deg);"></div>
+                  <div class="flow-edge" style="left: 58%; top: 56%; width: 22%; transform: rotate(4deg);"></div>
+                  <div class="flow-node good" style="left: 15%; top: 32%;">
+                    <div class="pulse-dot"></div>
+                    <strong>Ambulance</strong>
+                    <span id="flowArrival">-</span>
+                  </div>
+                  <div class="flow-node warn" style="left: 42%; top: 42%;">
+                    <strong>Triage Desk</strong>
+                    <span id="flowTriage">Awaiting decision</span>
+                  </div>
+                  <div class="flow-node hot" style="left: 72%; top: 30%;">
+                    <strong>Resus Bay</strong>
+                    <span id="flowResus">-</span>
+                  </div>
+                  <div class="flow-node good" style="left: 74%; top: 62%;">
+                    <strong>Monitored Beds</strong>
+                    <span id="flowBeds">-</span>
+                  </div>
+                  <div class="flow-node warn" style="left: 24%; top: 74%;">
+                    <strong>Waiting Room</strong>
+                    <span id="flowWaiting">-</span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="panel">
+                <h3>Command Metrics</h3>
+                <div class="resource-grid">
+                  <div class="resource-tile">
+                    <span>Current Reward</span>
+                    <strong id="metricReward">-</strong>
+                  </div>
+                  <div class="resource-tile">
+                    <span>Patient Score</span>
+                    <strong id="metricPatientScore">-</strong>
+                  </div>
+                  <div class="resource-tile">
+                    <span>Gold Category</span>
+                    <strong id="metricGold">-</strong>
+                  </div>
+                  <div class="resource-tile">
+                    <span>Critical Miss</span>
+                    <strong id="metricCritical">-</strong>
+                  </div>
+                </div>
+              </div>
+            </div>
             <div class="demo-grid">
               <div class="panel">
                 <div class="controls">
@@ -872,6 +1031,22 @@ def root() -> str:
             document.getElementById("graderNote").textContent = `${gold}; ${patientScore}; ${critical}.`;
           }
 
+          function renderFlowMap(obs) {
+            const metadata = obs.metadata || {};
+            const grader = metadata.grader || {};
+            document.getElementById("flowArrival").textContent = obs.arrival_mode || "-";
+            document.getElementById("flowTriage").textContent = obs.done ? "Episode complete" : `Next decision: CAT ${obs.previous_category || "-"}`;
+            document.getElementById("flowResus").textContent = obs.mental_status === "alert" ? "standby" : "attention needed";
+            document.getElementById("flowBeds").textContent = `${obs.available_beds} open`;
+            document.getElementById("flowWaiting").textContent = `${obs.waiting_room} waiting`;
+            document.getElementById("metricReward").textContent =
+              typeof obs.reward === "number" ? obs.reward.toFixed(2) : "-";
+            document.getElementById("metricPatientScore").textContent =
+              typeof grader.patient_score === "number" ? grader.patient_score.toFixed(2) : "-";
+            document.getElementById("metricGold").textContent = grader.gold_category || "-";
+            document.getElementById("metricCritical").textContent = grader.critical_miss ? "YES" : "NO";
+          }
+
           function render(payload) {
             if (payload.error) {
               showMessage(payload.error, true);
@@ -900,6 +1075,7 @@ def root() -> str:
             document.getElementById("obsBox").textContent = JSON.stringify(obs, null, 2);
             renderResourceMonitor(obs, state);
             renderRewardBreakdown(obs);
+            renderFlowMap(obs);
 
             if (typeof obs.reward === "number") {
               showMessage(`Reward ${obs.reward.toFixed(2)} | done=${obs.done}`, false);
