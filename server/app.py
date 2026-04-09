@@ -381,6 +381,127 @@ def root() -> str:
             font-weight: 800;
           }
 
+          .resource-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+            gap: 12px;
+          }
+
+          .resource-tile {
+            min-height: 112px;
+            border-radius: 18px;
+            padding: 14px;
+            background: rgba(255, 255, 255, 0.82);
+            border: 1px solid var(--line);
+            position: relative;
+            overflow: hidden;
+          }
+
+          .resource-tile::after {
+            content: "";
+            position: absolute;
+            inset: auto -20px -32px auto;
+            width: 90px;
+            height: 90px;
+            border-radius: 50%;
+            background: rgba(180, 53, 44, 0.10);
+          }
+
+          .resource-tile span {
+            color: var(--muted);
+            font-size: 12px;
+            font-weight: 900;
+            letter-spacing: 0.07em;
+            text-transform: uppercase;
+          }
+
+          .resource-tile strong {
+            display: block;
+            margin-top: 10px;
+            font-size: 34px;
+            letter-spacing: -0.04em;
+          }
+
+          .queue-bars {
+            display: grid;
+            gap: 10px;
+          }
+
+          .queue-row {
+            display: grid;
+            grid-template-columns: 72px 1fr 42px;
+            gap: 10px;
+            align-items: center;
+          }
+
+          .queue-label {
+            color: var(--muted);
+            font-size: 12px;
+            font-weight: 900;
+          }
+
+          .bar-shell {
+            height: 12px;
+            border-radius: 999px;
+            background: rgba(23, 63, 69, 0.10);
+            overflow: hidden;
+          }
+
+          .bar-fill {
+            height: 100%;
+            min-width: 4px;
+            border-radius: inherit;
+            background: linear-gradient(90deg, var(--accent), var(--warn));
+          }
+
+          .score-card {
+            display: grid;
+            grid-template-columns: 120px 1fr;
+            gap: 18px;
+            align-items: center;
+          }
+
+          .score-ring {
+            width: 112px;
+            height: 112px;
+            border-radius: 50%;
+            display: grid;
+            place-items: center;
+            background:
+              radial-gradient(circle at center, white 0 56%, transparent 57%),
+              conic-gradient(var(--success) calc(var(--score, 0) * 1%), rgba(23,63,69,0.12) 0);
+            border: 1px solid var(--line);
+            font-size: 24px;
+            font-weight: 900;
+            color: var(--success);
+          }
+
+          .component-list {
+            display: grid;
+            gap: 9px;
+          }
+
+          .component {
+            display: grid;
+            grid-template-columns: minmax(110px, 1fr) 60px;
+            gap: 10px;
+            align-items: center;
+            color: var(--muted);
+            font-size: 13px;
+          }
+
+          .component strong {
+            color: var(--text);
+            text-align: right;
+          }
+
+          .grader-note {
+            margin-top: 14px;
+            color: var(--muted);
+            font-size: 13px;
+            line-height: 1.55;
+          }
+
           pre {
             white-space: pre-wrap;
             overflow: auto;
@@ -527,6 +648,59 @@ def root() -> str:
 
             <div class="demo-grid">
               <div class="panel">
+                <h3>Resource Monitor</h3>
+                <div class="resource-grid">
+                  <div class="resource-tile">
+                    <span>Available Beds</span>
+                    <strong id="bedCount">-</strong>
+                  </div>
+                  <div class="resource-tile">
+                    <span>Waiting Room</span>
+                    <strong id="waitingCount">-</strong>
+                  </div>
+                  <div class="resource-tile">
+                    <span>Remaining Patients</span>
+                    <strong id="remainingCount">-</strong>
+                  </div>
+                  <div class="resource-tile">
+                    <span>Shift Minutes</span>
+                    <strong id="shiftMinutes">-</strong>
+                  </div>
+                </div>
+              </div>
+
+              <div class="panel">
+                <h3>Acuity Queue</h3>
+                <div class="queue-bars" id="queueBars"></div>
+              </div>
+            </div>
+
+            <div class="demo-grid">
+              <div class="panel">
+                <h3>Reward Breakdown</h3>
+                <div class="score-card">
+                  <div class="score-ring" id="scoreRing" style="--score: 0">-</div>
+                  <div>
+                    <div class="component-list" id="componentList">
+                      <div class="component"><span>No reward yet</span><strong>-</strong></div>
+                    </div>
+                    <p class="grader-note" id="graderNote">
+                      Submit an action to reveal grader feedback, gold triage category, and safety penalties.
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              <div class="panel">
+                <h3>Episode Metrics</h3>
+                <div class="component-list" id="metricList">
+                  <div class="component"><span>No episode metrics yet</span><strong>-</strong></div>
+                </div>
+              </div>
+            </div>
+
+            <div class="demo-grid">
+              <div class="panel">
                 <h3>State</h3>
                 <pre id="stateBox">{}</pre>
               </div>
@@ -644,6 +818,60 @@ def root() -> str:
             result.textContent = text;
           }
 
+          function renderResourceMonitor(obs, state) {
+            document.getElementById("bedCount").textContent = obs.available_beds;
+            document.getElementById("waitingCount").textContent = obs.waiting_room;
+            document.getElementById("remainingCount").textContent = obs.patients_remaining;
+            document.getElementById("shiftMinutes").textContent = obs.elapsed_shift_minutes;
+
+            const queue = obs.queue_by_acuity || [];
+            const maxQueue = Math.max(1, ...queue);
+            document.getElementById("queueBars").innerHTML = [1, 2, 3, 4, 5].map((acuity, index) => {
+              const value = Number(queue[index] || 0);
+              const width = Math.max(4, Math.round((value / maxQueue) * 100));
+              return `
+                <div class="queue-row">
+                  <div class="queue-label">Level ${acuity}</div>
+                  <div class="bar-shell"><div class="bar-fill" style="width: ${width}%"></div></div>
+                  <strong>${value}</strong>
+                </div>
+              `;
+            }).join("");
+
+            const metrics = (state && state.metrics) || {};
+            const metricEntries = Object.entries(metrics);
+            document.getElementById("metricList").innerHTML = metricEntries.length
+              ? metricEntries.map(([key, value]) => `
+                  <div class="component"><span>${key.replaceAll("_", " ")}</span><strong>${value}</strong></div>
+                `).join("")
+              : '<div class="component"><span>No episode metrics yet</span><strong>-</strong></div>';
+          }
+
+          function renderRewardBreakdown(obs) {
+            const metadata = obs.metadata || {};
+            const components = metadata.reward_components || {};
+            const grader = metadata.grader || {};
+            const reward = typeof obs.reward === "number" ? obs.reward : null;
+            const normalized = reward === null ? 0 : Math.max(0, Math.min(100, Math.round(((reward + 1) / 2) * 100)));
+            const ring = document.getElementById("scoreRing");
+            ring.style.setProperty("--score", normalized);
+            ring.textContent = reward === null ? "-" : reward.toFixed(2);
+
+            const entries = Object.entries(components);
+            document.getElementById("componentList").innerHTML = entries.length
+              ? entries.map(([key, value]) => `
+                  <div class="component"><span>${key.replaceAll("_", " ")}</span><strong>${Number(value).toFixed(2)}</strong></div>
+                `).join("")
+              : '<div class="component"><span>No reward yet</span><strong>-</strong></div>';
+
+            const gold = grader.gold_category ? `Gold category ${grader.gold_category}` : "Gold category hidden until first step";
+            const patientScore = typeof grader.patient_score === "number"
+              ? `patient score ${grader.patient_score.toFixed(2)}`
+              : "patient score pending";
+            const critical = grader.critical_miss ? "critical miss detected" : "no critical miss";
+            document.getElementById("graderNote").textContent = `${gold}; ${patientScore}; ${critical}.`;
+          }
+
           function render(payload) {
             if (payload.error) {
               showMessage(payload.error, true);
@@ -670,6 +898,8 @@ def root() -> str:
             document.getElementById("notes").innerHTML = (obs.notes || []).map(note => `<li>${note}</li>`).join("");
             document.getElementById("stateBox").textContent = JSON.stringify(state, null, 2);
             document.getElementById("obsBox").textContent = JSON.stringify(obs, null, 2);
+            renderResourceMonitor(obs, state);
+            renderRewardBreakdown(obs);
 
             if (typeof obs.reward === "number") {
               showMessage(`Reward ${obs.reward.toFixed(2)} | done=${obs.done}`, false);
